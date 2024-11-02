@@ -41,7 +41,22 @@ services:
       - $HOME/docker-data/mysql/data:/var/lib/mysql
     networks:
       - default
-      - compose_network  
+      - compose_network
+  keyclock:
+    image: keycloak/keycloak:latest
+    container_name: keycloak
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    environment:
+      TZ: "Asia/Seoul"  
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - $HOME/docker-data/keycloak:/opt/keycloak/data/
+    networks:
+      - default
+      - compose_network
   # rabbitmq:
   #   image: rabbitmq:management
   #   container_name: rabbitmq
