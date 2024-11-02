@@ -52,12 +52,18 @@ services:
       TZ: "Asia/Seoul"  
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      DB: MYSQL
+      DB_URL_HOST: mysql
+      DB_SCHEMA: keycloak
+      DB_USERNAME: keycloak
+      DB_PASSWORD: 1234
     command: 
       - start-dev
       - --http-relative-path=/auth
     volumes:
       - $HOME/docker-data/keycloak:/opt/keycloak/data/h2
-      - ./keycloak/keycloak.conf:/conf/keycloak.conf
+    depends_on:
+      - mysql
     networks:
       - default
       - compose_network
