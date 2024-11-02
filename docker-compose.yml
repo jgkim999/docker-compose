@@ -1,4 +1,13 @@
 services:
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      TZ: "Asia/Seoul"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 28800
   portainer:
     image: portainer/portainer-ce:alpine
     container_name: portainer
