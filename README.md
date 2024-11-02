@@ -44,11 +44,11 @@ FLUSH PRIVILEGES;
 Keycloak
 
 ```sql
-CREATE DATABASE IF NOT EXISTS `keyclock`
-USE `keyclock`;
+CREATE DATABASE IF NOT EXISTS `keycloak`
+USE `keycloak`;
 
-CREATE USER 'keyclock'@'%' IDENTIFIED BY '1234';
-GRANT ALL PRIVILEGES ON *.* TO 'keyclock'@'%';
+CREATE USER 'keycloak'@'%' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON *.* TO 'keycloak'@'%';
 FLUSH PRIVILEGES;
 ```
 
