@@ -52,6 +52,8 @@ services:
       TZ: "Asia/Seoul"  
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    command: 
+      - start-dev
     volumes:
       - $HOME/docker-data/keycloak:/opt/keycloak/data/
     networks:
