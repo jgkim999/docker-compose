@@ -41,6 +41,17 @@ GRANT ALL PRIVILEGES ON *.* TO 'exporter'@'%';
 FLUSH PRIVILEGES;
 ```
 
+Keycloak
+
+```sql
+CREATE DATABASE IF NOT EXISTS `keyclock`
+USE `keyclock`;
+
+CREATE USER 'keyclock'@'%' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON *.* TO 'keyclock'@'%';
+FLUSH PRIVILEGES;
+```
+
 ## RabbitMQ
 
 [RabbitMQ](https://www.rabbitmq.com/)

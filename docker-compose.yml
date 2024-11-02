@@ -56,7 +56,8 @@ services:
       - start-dev
       - --http-relative-path=/auth
     volumes:
-      - $HOME/docker-data/keycloak:/opt/keycloak/data/h2      
+      - $HOME/docker-data/keycloak:/opt/keycloak/data/h2
+      - ./keycloak/keycloak.conf:/conf/keycloak.conf
     networks:
       - default
       - compose_network
