@@ -54,8 +54,9 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     command: 
       - start-dev
+      - --http-relative-path=/auth
     volumes:
-      - $HOME/docker-data/keycloak:/opt/keycloak/data/
+      - $HOME/docker-data/keycloak:/opt/keycloak/data/h2      
     networks:
       - default
       - compose_network
