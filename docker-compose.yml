@@ -21,6 +21,26 @@ services:
       - $HOME/docker-data/portainer/data:/data
     networks:
       - default
+      - compose_network
+  mysql:
+    image: mysql:lts
+    container_name: mysql
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    environment:
+      TZ: "Asia/Seoul"
+      MYSQL_DATABASE: test-db
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_ROOT_HOST: '%'
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - $HOME/docker-compose/mysql/mysql.conf:/etc/mysql/my.cnf
+      - $HOME/docker-data/mysql/data:/var/lib/mysql
+    networks:
+      - default
       - compose_network  
   # rabbitmq:
   #   image: rabbitmq:management
@@ -38,26 +58,6 @@ services:
   #     - $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
   #     - $HOME/docker-data/rabbitmq/lib:/var/lib/rabbitmq/'
   #     - $HOME/docker-data/rabbitmq/log:/var/log/rabbitmq/'
-  #   networks:
-  #     - default
-  #     - compose_network
-  # mysql:
-  #   image: mysql:lts
-  #   container_name: mysql
-  #   restart: unless-stopped
-  #   ports:
-  #     - 3306:3306
-  #   environment:
-  #     TZ: "Asia/Seoul"
-  #     MYSQL_DATABASE: test-db
-  #     MYSQL_ROOT_PASSWORD: "1234"
-  #     MYSQL_ROOT_HOST: '%'
-  #   command:
-  #     - --character-set-server=utf8mb4
-  #     - --collation-server=utf8mb4_unicode_ci
-  #   volumes:
-  #     - $HOME/docker-compose/mysql/mysql.conf:/etc/mysql/my.cnf
-  #     - $HOME/docker-data/mysql/data:/var/lib/mysql
   #   networks:
   #     - default
   #     - compose_network
