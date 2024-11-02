@@ -42,28 +42,47 @@ services:
     networks:
       - default
       - compose_network
+  postgres:
+    image: postgres:16.2
+    container_name: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - $HOME/docker-data/postgres_d0ata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - default
+      - compose_network
   keyclock:
-    image: keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
     restart: unless-stopped
     ports:
       - 8080:8080
     environment:
       TZ: "Asia/Seoul"  
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      DB: MYSQL
-      DB_URL_HOST: mysql
-      DB_SCHEMA: keycloak
-      DB_USERNAME: keycloak
-      DB_PASSWORD: 1234
-    command: 
-      - start-dev
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/${POSTGRES_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    command:
+      - start
       - --http-relative-path=/auth
     volumes:
       - $HOME/docker-data/keycloak:/opt/keycloak/data/h2
     depends_on:
-      - mysql
+      - postgres
     networks:
       - default
       - compose_network
