@@ -138,7 +138,6 @@ services:
       - '--redis.addr=redis://redis:6379'
     links:
       - redis
-      - prometheus
     environment:
       TZ: "Asia/Seoul"
     networks:
