@@ -86,25 +86,25 @@ services:
     networks:
       - default
       - compose_network
-  # rabbitmq:
-  #   image: rabbitmq:management
-  #   container_name: rabbitmq
-  #   restart: unless-stopped
-  #   ports:
-  #     - 5672:5672
-  #     - 15672:15672
-  #     - 15692:15692
-  #   environment:
-  #     TZ: "Asia/Seoul"
-  #     RABBITMQ_DEFAULT_USER: user
-  #     RABBITMQ_DEFAULT_PASS: 1234
-  #   volumes:
-  #     - $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-  #     - $HOME/docker-data/rabbitmq/lib:/var/lib/rabbitmq/'
-  #     - $HOME/docker-data/rabbitmq/log:/var/log/rabbitmq/'
-  #   networks:
-  #     - default
-  #     - compose_network
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 15692:15692
+    environment:
+      TZ: "Asia/Seoul"
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: 1234
+    volumes:
+      - $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - $HOME/docker-data/rabbitmq/lib:/var/lib/rabbitmq/'
+      - $HOME/docker-data/rabbitmq/log:/var/log/rabbitmq/'
+    networks:
+      - default
+      - compose_network
   # mysql-exporter:
   #   image: bitnami/mysqld-exporter:latest
   #   container_name: mysql-exporter
