@@ -103,7 +103,7 @@ services:
       TZ: "Asia/Seoul"
       ACCEPT_EULA: Y
     volumes:
-      - $HOME/docker-compose/seq/data:/data
+      - $HOME/docker-data/seq/data:/data
     ports:
       - 10000:80
       - 10001:5341
