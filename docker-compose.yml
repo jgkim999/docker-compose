@@ -56,7 +56,9 @@ services:
     image: grafana/loki:latest
     container_name: loki
     restart: unless-stopped
-    command: -config.file=/etc/loki/local-config.yaml    
+    environment:
+      TZ: "Asia/Seoul"
+    command: -config.file=/etc/loki/local-config.yaml
     user: ":"
     ports:
        - 3100:3100
@@ -162,6 +164,8 @@ services:
     image: grafana/promtail:latest
     container_name: promtail
     restart: unless-stopped
+    environment:
+      TZ: "Asia/Seoul"
     ports:
       - 9080:9080
     command:
@@ -246,6 +250,8 @@ services:
   tempo:
     container_name: tempo
     image: grafana/tempo:latest
+    environment:
+      TZ: "Asia/Seoul"
     command:
       [
         "-config.file=/etc/tempo/config/tempo.yml",
