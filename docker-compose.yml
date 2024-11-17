@@ -79,8 +79,7 @@ services:
   rabbitmq:
     image: rabbitmq:management
     container_name: rabbitmq
-    hostname: rabbit
-    restart: unless-stopped
+    estart: unless-stopped
     ports:
       - 5672:5672
       - 15672:15672
@@ -92,7 +91,7 @@ services:
       RABBITMQ_DEFAULT_PASS: 1234
     volumes:
       - $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - $HOME/docker-data/rabbitmq/lib:/var/lib/rabbitmq/'
+      - $HOME/docker-data/rabbitmq/lib/mnesia:/var/lib/rabbitmq/mnesia'
       - $HOME/docker-data/rabbitmq/log:/var/log/rabbitmq/'
     networks:
       - default
