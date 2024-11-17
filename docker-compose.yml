@@ -199,6 +199,9 @@ services:
     user: ":"
     ports:
       - 9090:9090
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
     volumes:
       - $HOME/docker-data/prometheus/data:/prometheus
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -207,7 +210,7 @@ services:
     networks:
       - default
       - compose_network
-  grapana:
+  grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
