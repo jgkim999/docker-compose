@@ -1,15 +1,74 @@
 services:
-  portainer:
-    image: portainer/portainer-ce:alpine
-    container_name: portainer
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
     restart: unless-stopped
     ports:
-      - 9000:9000
+      - 8090:8080
     environment:
       TZ: "Asia/Seoul"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - $HOME/docker-data/portainer/data:/data
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - default
+      - compose_network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    user: ":"
+    environment:
+      TZ: "Asia/Seoul"
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+    ports:
+      - 3000:3000
+    volumes:
+      - $HOME/docker-data/grafana/data:/var/lib/grafana
+      - $HOME/docker-data/grafana:/etc/grafana/provisioning/datasources
+    networks:
+      - default
+      - compose_network
+  keyclock:
+    image: bitnami/keycloak
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      TZ: "Asia/Seoul"  
+      KEYCLOAK_ADMIN_USER: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_DATABASE_HOST: postgres
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: ${POSTGRES_DB}
+      KEYCLOAK_DATABASE_USER: ${POSTGRES_USER}
+      KEYCLOAK_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      - postgres
+    networks:
+      - default
+      - compose_network
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml    
+    user: ":"
+    ports:
+       - 3100:3100
+       - 9096:9096
+    healthcheck:
+        test: wget -q --tries=1 -O- http://localhost:3100/ready 
+        interval: 3s
+        timeout: 3s
+        retries: 10
+        start_period: 10s
+    volumes:
+      - $HOME/docker-data/loki/data:/loki
     networks:
       - default
       - compose_network
@@ -33,6 +92,31 @@ services:
     networks:
       - default
       - compose_network
+  node-exporter:
+    image: bitnami/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+    environment:
+      TZ: "Asia/Seoul"
+    networks:
+      - default
+      - compose_network
+  portainer:
+    image: portainer/portainer-ce:alpine
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - 9000:9000
+    environment:
+      TZ: "Asia/Seoul"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $HOME/docker-data/portainer/data:/data
+    networks:
+      - default
+      - compose_network  
   postgres:
     image: postgres:16.2
     container_name: postgres
@@ -48,22 +132,29 @@ services:
     networks:
       - default
       - compose_network
-  keyclock:
-    image: bitnami/keycloak
-    restart: always
+  prometheus:
+    image: bitnami/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    user: ":"
     ports:
-      - 8080:8080
+      - 9090:9090
+    command:
+      - '--web.enable-lifecycle'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-remote-write-receiver'
+      - '--enable-feature=exemplar-storage'
+      - '--storage.tsdb.retention=7d'
+    volumes:
+      - $HOME/docker-data/prometheus/data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     environment:
-      TZ: "Asia/Seoul"  
-      KEYCLOAK_ADMIN_USER: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KEYCLOAK_DATABASE_HOST: postgres
-      KEYCLOAK_DATABASE_PORT: 5432
-      KEYCLOAK_DATABASE_NAME: ${POSTGRES_DB}
-      KEYCLOAK_DATABASE_USER: ${POSTGRES_USER}
-      KEYCLOAK_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
-    depends_on:
-      - postgres
+      TZ: "Asia/Seoul"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "8m"
+        max-file: "10"
     networks:
       - default
       - compose_network
@@ -85,21 +176,6 @@ services:
       #- $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - $HOME/docker-data/rabbitmq/:/var/lib/rabbitmq/mnesia/
       - $HOME/docker-data/rabbitmq/:/var/log/rabbitmq/
-    networks:
-      - default
-      - compose_network
-  seq:
-    image: datalust/seq:latest
-    container_name: seq
-    restart: unless-stopped
-    environment:
-      TZ: "Asia/Seoul"
-      ACCEPT_EULA: Y
-    volumes:
-      - $HOME/docker-data/seq/data:/data
-    ports:
-      - 10000:80
-      - 10001:5341
     networks:
       - default
       - compose_network
@@ -136,31 +212,18 @@ services:
     networks:
       - default
       - compose_network
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
     restart: unless-stopped
-    ports:
-      - 8090:8080
     environment:
       TZ: "Asia/Seoul"
+      ACCEPT_EULA: Y
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    networks:
-      - default
-      - compose_network
-  node-exporter:
-    image: bitnami/node-exporter:latest
-    container_name: node-exporter
-    restart: unless-stopped
+      - $HOME/docker-data/seq/data:/data
     ports:
-      - 9100:9100
-    environment:
-      TZ: "Asia/Seoul"
+      - 10000:80
+      - 10001:5341
     networks:
       - default
       - compose_network
@@ -185,69 +248,6 @@ services:
   #   networks:
   #     - default
   #     - compose_network  
-  prometheus:
-    image: bitnami/prometheus:latest
-    container_name: prometheus
-    restart: unless-stopped
-    user: ":"
-    ports:
-      - 9090:9090
-    command:
-      - '--web.enable-lifecycle'
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--web.enable-remote-write-receiver'
-      - '--enable-feature=exemplar-storage'
-      - '--storage.tsdb.retention=7d'
-    volumes:
-      - $HOME/docker-data/prometheus/data:/prometheus
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    environment:
-      TZ: "Asia/Seoul"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "8m"
-        max-file: "10"
-    networks:
-      - default
-      - compose_network
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    restart: unless-stopped
-    user: ":"
-    environment:
-      TZ: "Asia/Seoul"
-      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
-      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
-    ports:
-      - 3000:3000
-    volumes:
-      - $HOME/docker-data/grafana/data:/var/lib/grafana
-      - $HOME/docker-data/grafana:/etc/grafana/provisioning/datasources
-    networks:
-      - default
-      - compose_network
-  loki:
-    image: grafana/loki:latest
-    container_name: loki
-    restart: unless-stopped
-    command: -config.file=/etc/loki/local-config.yaml    
-    user: ":"
-    ports:
-       - 3100:3100
-       - 9096:9096
-    healthcheck:
-        test: wget -q --tries=1 -O- http://localhost:3100/ready 
-        interval: 3s
-        timeout: 3s
-        retries: 10
-        start_period: 10s
-    volumes:
-      - $HOME/docker-data/loki/data:/loki
-    networks:
-      - default
-      - compose_network
   # promtail:
   #   image: grafana/promtail:latest
   #   container_name: promtail
