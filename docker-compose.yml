@@ -164,9 +164,12 @@ services:
     restart: unless-stopped
     ports:
       - 9080:9080
-    command: -config.file=/etc/promtail/config/config.yml
+    command:
+      - '-config.expand-env=true'
+      - '-config.file=/etc/promtail/config.yml'
     volumes:
-      - ./promtail:/etc/promtail/config
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - ./promtail/config.yml:/etc/promtail/config.yml
       - $HOME/docker-data/promtail/volume:/promtail
       #- ./spring-sample/logs:/logs
   #   networks:
