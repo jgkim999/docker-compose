@@ -70,7 +70,7 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
-    hostname: 'my-rabbit'
+    hostname: 'mabbit'
     restart: unless-stopped
     ports:
       - 5672:5672
@@ -81,11 +81,10 @@ services:
       TZ: "Asia/Seoul"
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: 1234
-      RABBITMQ_NODENAME: rabbit@my-rabbit
     volumes:
       #- $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - $HOME/docker-data/rabbitmq/lib/mnesia:/var/lib/rabbitmq/mnesia'
-      - $HOME/docker-data/rabbitmq/log:/var/log/rabbitmq/'
+      - $HOME/docker-data/rabbitmq/:/var/lib/rabbitmq/mnesia/
+      - $HOME/docker-data/rabbitmq/:/var/log/rabbitmq/
     networks:
       - default
       - compose_network
