@@ -252,7 +252,7 @@ services:
         "--auth.enabled=false"
       ]
     volumes:
-      - ./tempo/config:/etc/tempo/config
+      - ./tempo:/etc/tempo/config
       - $HOME/docker-datfa/tempo:/var
     ports:
       - 3200:3200 # tempo
