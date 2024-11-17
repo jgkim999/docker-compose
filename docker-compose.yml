@@ -1,13 +1,4 @@
 services:
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    restart: unless-stopped
-    environment:
-      TZ: "Asia/Seoul"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 28800
   portainer:
     image: portainer/portainer-ce:alpine
     container_name: portainer
@@ -77,9 +68,10 @@ services:
       - default
       - compose_network
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:3-management
     container_name: rabbitmq
-    estart: unless-stopped
+    hostname: 'my-rabbit'
+    restart: unless-stopped
     ports:
       - 5672:5672
       - 15672:15672
@@ -89,8 +81,9 @@ services:
       TZ: "Asia/Seoul"
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: 1234
+      RABBITMQ_NODENAME: rabbit@my-rabbit
     volumes:
-      - $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      #- $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - $HOME/docker-data/rabbitmq/lib/mnesia:/var/lib/rabbitmq/mnesia'
       - $HOME/docker-data/rabbitmq/log:/var/log/rabbitmq/'
     networks:
