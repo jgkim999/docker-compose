@@ -192,11 +192,22 @@ services:
     user: ":"
     ports:
       - 9090:9090
+    command:
+      - '--web.enable-lifecycle'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-remote-write-receiver'
+      - '--enable-feature=exemplar-storage'
+      - '--storage.tsdb.retention=7d'
     volumes:
       - $HOME/docker-data/prometheus/data:/prometheus
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     environment:
       TZ: "Asia/Seoul"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "8m"
+        max-file: "10"
     networks:
       - default
       - compose_network
