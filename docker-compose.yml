@@ -201,9 +201,6 @@ services:
     user: ":"
     ports:
       - 9090:9090
-    command:
-      - --web.enable-remote-write-receiver
-      - --enable-feature=native-histograms
     volumes:
       - $HOME/docker-data/prometheus/data:/prometheus
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
