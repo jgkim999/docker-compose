@@ -79,10 +79,12 @@ services:
   rabbitmq:
     image: rabbitmq:management
     container_name: rabbitmq
+    hostname: rabbit
     restart: unless-stopped
     ports:
       - 5672:5672
       - 15672:15672
+      # Prometheus metrics: HTTP (non-TLS) port 15692
       - 15692:15692
     environment:
       TZ: "Asia/Seoul"
