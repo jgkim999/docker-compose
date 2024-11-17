@@ -192,22 +192,25 @@ services:
   #   networks:
   #     - default
   #     - compose_network  
-  # prometheus:
-  #   image: bitnami/prometheus:latest
-  #   container_name: prometheus
-  #   restart: unless-stopped
-  #   user: root
-  #   ports:
-  #     - 9090:9090
-  #   volumes:
-  #     - ./prometheus/data:/prometheus
-  #     - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-  #   environment:
-  #     TZ: "Asia/Seoul"
-  #   networks:
-  #     - default
-  #     - compose_network
-  grapana:
+  prometheus:
+    image: bitnami/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    user: ":"
+    ports:
+      - 9090:9090
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+    volumes:
+      - $HOME/docker-data/prometheus/data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    environment:
+      TZ: "Asia/Seoul"
+    networks:
+      - default
+      - compose_network
+  grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
