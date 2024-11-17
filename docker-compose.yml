@@ -158,6 +158,20 @@ services:
     networks:
       - default
       - compose_network
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    restart: unless-stopped
+    ports:
+      - 9080:9080
+    command: -config.file=/etc/promtail/config/config.yml
+    volumes:
+      - ./promtail/config:/etc/promtail/config
+      - $HOME/docker-data/promtail/volume:/promtail
+      #- ./spring-sample/logs:/logs
+  #   networks:
+  #     - default
+  #     - compose_network
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -248,16 +262,6 @@ services:
   #   networks:
   #     - default
   #     - compose_network  
-  # promtail:
-  #   image: grafana/promtail:latest
-  #   container_name: promtail
-  #   restart: unless-stopped
-  #   command: -config.file=/etc/promtail/config.yml
-  #   volumes:
-  #     - /var/log:/var/log
-  #   networks:
-  #     - default
-  #     - compose_network
   # gitlab:
   #   image: gitlab/gitlab-ce:latest
   #   container_name: gitlab
