@@ -144,6 +144,8 @@ services:
     networks:
       - default
       - compose_network
+    depends_on:
+      - opensearch
   portainer:
     image: portainer/portainer-ce:alpine
     container_name: portainer
