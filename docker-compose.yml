@@ -140,7 +140,7 @@ services:
       - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
     environment:
       TZ: "Asia/Seoul"
-      OPENSEARCH_HOSTS: '["https://opensearch-node1:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+      OPENSEARCH_HOSTS: '["http://opensearch-node1:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
     networks:
       - default
       - compose_network
