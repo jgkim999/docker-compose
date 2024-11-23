@@ -35,7 +35,10 @@ services:
       - compose_network
   jaeger: 
     image: "jaegertracing/all-in-one:1.63.0"
+    container_name: jaeger
+    restart: unless-stopped
     environment:
+      - TZ=Asia/Seoul
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
       - COLLECTOR_OTLP_ENABLED=true
     ports:
