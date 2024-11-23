@@ -109,13 +109,14 @@ services:
     image: opensearchproject/opensearch:latest
     container_name: opensearch-node1
     restart: unless-stopped
-    user: 1000:1000 # Ensure the opensearch user has the correct permissions to access the data directory
+    user: root # Ensure the opensearch user has the correct permissions to access the data directory
     ports:
-      - 9200:9200
-      - 9600:9600
+      - 9200:9200 # REST API
+      - 9600:9600 # Performance Analyzer
     environment:
       - TZ=Asia/Seoul
       - discovery.type=single-node
+      - node.name=opensearch-node1 # Name the node that will run in this container
       - bootstrap.memory_lock=true # Disable JVM heap memory swapping
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Set min and max JVM heap sizes to at least 50% of system RAM
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=1234QWERasdf!@#$ # Set the initial password for the admin user
@@ -127,7 +128,7 @@ services:
         soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
         hard: 65536
     volumes:
-      - $HOME/opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
+      - $HOME/docker-data/opensearch/opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
     networks:
       - default
       - compose_network
