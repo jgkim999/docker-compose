@@ -26,10 +26,7 @@ scrape_configs:
           job: auth-logs
           application: system-auth
           env: dev
-          __path__: /var/log/auth.log      
-    relabel_configs:
-      - source_labels: ["__address__"]
-        target_label: address
+          __path__: /var/log/auth.log
   - job_name: dpkg-log
     static_configs:
       - targets:
@@ -39,9 +36,6 @@ scrape_configs:
           application: system-dpkg
           env: dev
           __path__: /var/log/dpkg.log
-    relabel_configs:
-      - source_labels: ["__address__"]
-        target_label: address
   - job_name: kern-log
     static_configs:      
       - targets:
@@ -51,6 +45,12 @@ scrape_configs:
           application: system-kern
           env: dev
           __path__: /var/log/kern.log
-    relabel_configs:
-      - source_labels: ["__address__"]
-        target_label: address
+  - job_name: sys-log
+    static_configs:      
+      - targets:
+          - localhost
+        labels:
+          job: sys-logs
+          application: system-sys
+          env: dev
+          __path__: /var/log/syslog
