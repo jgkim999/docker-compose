@@ -109,7 +109,7 @@ services:
     image: opensearchproject/opensearch:latest
     container_name: opensearch-node1
     restart: unless-stopped
-    user: root # Ensure the opensearch user has the correct permissions to access the data directory
+    user: ":"
     ports:
       - 9200:9200 # REST API
       - 9600:9600 # Performance Analyzer
@@ -119,7 +119,7 @@ services:
       - node.name=opensearch-node1 # Name the node that will run in this container
       - bootstrap.memory_lock=true # Disable JVM heap memory swapping
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Set min and max JVM heap sizes to at least 50% of system RAM
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=1234QWERasdf!@#$ # Set the initial password for the admin user
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_PASSWORD} # Set the initial password for the admin user
     ulimits:
       memlock:
         soft: -1 # Set memlock to unlimited (no soft or hard limit)
