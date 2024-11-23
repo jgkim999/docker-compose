@@ -33,6 +33,22 @@ services:
     networks:
       - default
       - compose_network
+  jaeger: 
+    image: "jaegertracing/all-in-one:1.63.0"
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "6831:6831/udp" # jaeger-agent
+      - "6832:6832/udp" # jaeger-agent Node.js
+      - "5778:5778" # for JAEGER_AGENT_PORT
+      - "16686:16686" # Web UI
+      - "4317:4317" # for OTLP HTTP gRPC
+      - "4318:4318" # for OTLP HTTP
+      - "14250:14250" # for OTLP HTTP model.proto
+      - "14268:14268" # for OTLP gRPC
+      - "14269:14269" # for OTLP gRPC
+      - "9411:9411" # for Zipkin
   keyclock:
     image: bitnami/keycloak
     restart: always
