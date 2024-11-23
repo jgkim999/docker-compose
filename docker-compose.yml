@@ -43,8 +43,8 @@ services:
       - "6832:6832/udp" # jaeger-agent Node.js
       - "5778:5778" # for JAEGER_AGENT_PORT
       - "16686:16686" # Web UI
-      - "4317:4317" # for OTLP HTTP gRPC
-      - "4318:4318" # for OTLP HTTP
+      - "4417:4317" # for OTLP HTTP gRPC
+      - "4418:4318" # for OTLP HTTP
       - "14250:14250" # for OTLP HTTP model.proto
       - "14268:14268" # for OTLP gRPC
       - "14269:14269" # for OTLP gRPC
