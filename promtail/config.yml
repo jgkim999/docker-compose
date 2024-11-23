@@ -18,27 +18,37 @@ scrape_configs:
         target_label: container
       - source_labels: [__meta_docker_container_log_path]
         target_label: __path__
-  - job_name: var-log
+  - job_name: auth-log
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: auth-logs
+          application: system-auth
+          env: dev
+          __path__: /var/log/auth.log      
+    relabel_configs:
+      - source_labels: ["__address__"]
+        target_label: address
+  - job_name: dpkg-log
     static_configs:
       - targets:
           - localhost
         labels:
           job: dpkg-logs
-          application: system
+          application: system-dpkg
           env: dev
           __path__: /var/log/dpkg.log
-      - targets:
-          - localhost
-        labels:
-          job: auth-logs
-          application: system
-          env: dev
-          __path__: /var/log/auth.log
+    relabel_configs:
+      - source_labels: ["__address__"]
+        target_label: address
+  - job_name: kern-log
+    static_configs:      
       - targets:
           - localhost
         labels:
           job: kern-logs
-          application: system
+          application: system-kern
           env: dev
           __path__: /var/log/kern.log
     relabel_configs:
