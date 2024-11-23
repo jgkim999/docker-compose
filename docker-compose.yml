@@ -48,7 +48,7 @@ services:
       - ES_TLS_SKIP_HOST_VERIFY=true
     command: [
       "--es.server-urls=http://opensearch-node1:9200",
-      "--es.tls.enabled=false",
+      "--es.tls.enabled=true",
     ]
     ports:
       - "6831:6831/udp" # jaeger-agent
