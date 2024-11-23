@@ -259,7 +259,7 @@ services:
       ]
     volumes:
       - ./tempo:/etc/tempo/config
-      - $HOME/docker-datfa/tempo:/var
+      - $HOME/docker-data/tempo:/var
     ports:
       - 3200:3200 # tempo
       - 9095:9095 # tempo grpc

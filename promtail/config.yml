@@ -13,9 +13,24 @@ scrape_configs:
       - targets:
           - localhost
         labels:
-          application: ubuntu
+          job: dpkg-logs
+          application: system
           env: dev
-          __path__: /var/log/*.log
+          __path__: /var/log/dpkg.log
+      - targets:
+          - localhost
+        labels:
+          job: auth-logs
+          application: system
+          env: dev
+          __path__: /var/log/auth.log
+      - targets:
+          - localhost
+        labels:
+          job: kern-logs
+          application: system
+          env: dev
+          __path__: /var/log/kern.log
     relabel_configs:
       - source_labels: ["__address__"]
         target_label: address
