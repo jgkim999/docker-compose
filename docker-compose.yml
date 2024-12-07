@@ -198,6 +198,7 @@ services:
       - --web.enable-remote-write-receiver
       - --enable-feature=exemplar-storage
       - --storage.tsdb.retention.time=7d
+      - --enable-feature=native-histograms
     volumes:
       - $HOME/docker-data/prometheus/data:/prometheus
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
