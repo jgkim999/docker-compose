@@ -11,11 +11,9 @@ services:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
+      #- /var/lib/docker/:/var/lib/docker:ro
+      - /var/snap/docker/common/var-lib-docker:/var/snap/docker/common/var-lib-docker:ro
       - /dev/disk/:/dev/disk:ro
-    networks:
-      - default
-      - compose_network
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -30,13 +28,12 @@ services:
     volumes:
       - $HOME/docker-data/grafana/data:/var/lib/grafana
       - $HOME/docker-data/grafana:/etc/grafana/provisioning/datasources
-    networks:
-      - default
-      - compose_network
   jaeger: 
     image: "jaegertracing/all-in-one:1.63.0"
     container_name: jaeger
     restart: unless-stopped
+    links:
+      - opensearch
     environment:
       - TZ=Asia/Seoul
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
@@ -77,9 +74,6 @@ services:
       KEYCLOAK_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       - postgres
-    networks:
-      - default
-      - compose_network
   loki:
     image: grafana/loki:latest
     container_name: loki
@@ -99,9 +93,6 @@ services:
         start_period: 10s
     volumes:
       - $HOME/docker-data/loki/data:/loki
-    networks:
-      - default
-      - compose_network
   mysql:
     image: mysql:lts
     container_name: mysql
@@ -119,9 +110,6 @@ services:
     volumes:
       - $HOME/docker-compose/mysql/mysql.conf:/etc/mysql/my.cnf
       - $HOME/docker-data/mysql/data:/var/lib/mysql
-    networks:
-      - default
-      - compose_network
   node-exporter:
     image: bitnami/node-exporter:latest
     container_name: node-exporter
@@ -130,9 +118,6 @@ services:
       - 9100:9100
     environment:
       TZ: "Asia/Seoul"
-    networks:
-      - default
-      - compose_network
   opensearch:
     image: opensearchproject/opensearch:latest
     container_name: opensearch-node1
@@ -158,9 +143,6 @@ services:
         hard: 65536
     volumes:
       - $HOME/docker-data/opensearch/opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
-    networks:
-      - default
-      - compose_network
   opensearch-dashboards:
     image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
     container_name: opensearch-dashboards
@@ -177,7 +159,6 @@ services:
       - ./opensearch_dashboards/custom-opensearch_dashboards.yml:/usr/share/opensearch-dashboards/config/opensearch_dashboards.yml
     networks:
       - default
-      - compose_network
     depends_on:
       - opensearch
   portainer:
@@ -191,9 +172,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - $HOME/docker-data/portainer/data:/data
-    networks:
-      - default
-      - compose_network  
   postgres:
     image: postgres:16.2
     container_name: postgres
@@ -206,9 +184,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    networks:
-      - default
-      - compose_network
   prometheus:
     image: bitnami/prometheus:latest
     container_name: prometheus
@@ -232,9 +207,6 @@ services:
       options:
         max-size: "8m"
         max-file: "10"
-    networks:
-      - default
-      - compose_network
   promtail:
     image: grafana/promtail:latest
     container_name: promtail
@@ -272,9 +244,6 @@ services:
       #- $HOME/docker-compose/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - $HOME/docker-data/rabbitmq/:/var/lib/rabbitmq/mnesia/
       - $HOME/docker-data/rabbitmq/:/var/log/rabbitmq/
-    networks:
-      - default
-      - compose_network
   redis:
     image: redis:latest
     container_name: redis
@@ -290,9 +259,6 @@ services:
       TZ: "Asia/Seoul"
     volumes:
       - $HOME/docker-data/redis/data:/data
-    networks:
-      - default
-      - compose_network    
   redis-exporter:
     image: bitnami/redis-exporter:latest
     container_name: redis_exporter
@@ -305,9 +271,6 @@ services:
       - redis
     environment:
       TZ: "Asia/Seoul"
-    networks:
-      - default
-      - compose_network
   seq:
     image: datalust/seq:latest
     container_name: seq
@@ -320,9 +283,6 @@ services:
     ports:
       - 10000:80
       - 10001:5341
-    networks:
-      - default
-      - compose_network
   tempo:
     container_name: tempo
     image: grafana/tempo:latest
